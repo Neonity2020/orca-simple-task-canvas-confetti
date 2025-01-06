@@ -1,5 +1,9 @@
 # Simple Task Canvas Confetti
 
+Forked from https://github.com/sethyuan/orca-simple-task.
+
+Thanks for Seth's sharing.
+
 A Orca Note plugin that provides the ability to create tasks and confetti effect.
 
 ![image](https://github.com/user-attachments/assets/eb2f7bd7-d420-4352-93a7-249bed7808e2)
