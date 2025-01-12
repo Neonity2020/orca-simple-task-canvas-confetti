@@ -1,6 +1,6 @@
 {
-  "name": "simple-task-canvas-confetti",
-  "version": "1.3.0",
+  "name": "orca-plugin-simple-task",
+  "version": "1.3.1",
   "type": "module",
   "scripts": {
     "dev": "vite",

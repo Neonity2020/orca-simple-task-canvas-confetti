@@ -1,8 +1,8 @@
-import { setupL10N, t } from "./libs/l10n"
+import { setupL10N, t } from "./libs/l10n.ts"
 import { getMirrorId } from "./libs/utils.ts"
-import type { DbId } from "./orca.d.ts"
-import zhCN from "./translations/zhCN"
-import confetti from 'canvas-confetti'
+import type { Block, DbId } from "./orca"
+import zhCN from "./translations/zhCN.ts"
+import confetti from 'canvas-confetti';
 
 const { subscribe } = window.Valtio
 
@@ -11,6 +11,8 @@ let unsubscribe: () => void
 let prevTaskTagName: string
 
 const statusState: Map<string, string> = new Map()
+
+declare module 'canvas-confetti';
 
 export async function load(_name: string) {
   pluginName = _name
@@ -129,14 +131,6 @@ export async function load(_name: string) {
             (d) => d.name === settings.endTimeName,
           )?.value
 
-          if (nextStatus === settings.statusDone) {
-            confetti({
-              particleCount: 100,
-              spread: 70,
-              origin: { y: 0.6 }
-            })
-          }
-
           await orca.commands.invokeEditorCommand(
             "core.editor.insertTag",
             cursor,
@@ -160,6 +154,15 @@ export async function load(_name: string) {
               },
             ],
           )
+
+          if (nextStatus === settings.statusDone) {
+            confetti({
+              particleCount: 100,
+              spread: 70,
+              origin: { y: 0.6 },
+              colors: ['#ff0a54', '#ff477e', '#ff7096', '#ff85a2', '#fbb1bd', '#f9bec7']
+            });
+          }
         }
 
         return null
@@ -215,9 +218,12 @@ async function readyTag(isUpdate: boolean = false) {
     }
   }
 
-  let { id: taskBlockId } =
-    (await orca.invokeBackend("get-blockid-by-alias", settings.taskName)) ?? {}
-  const nonExistent = taskBlockId == null
+  let taskBlock = (await orca.invokeBackend(
+    "get-block-by-alias",
+    settings.taskName,
+  )) as Block
+  let taskBlockId = taskBlock?.id
+  const nonExistent = taskBlock == null
 
   // Ensure task tag exists
   if (nonExistent) {
@@ -259,16 +265,25 @@ async function readyTag(isUpdate: boolean = false) {
               settings.statusDone,
             ],
           },
+          pos: taskBlock?.properties?.find(
+            (p) => p.name === settings.statusName,
+          )?.pos,
         },
         {
           name: settings.startTimeName,
           type: 5,
           typeArgs: { subType: "datetime" },
+          pos: taskBlock?.properties?.find(
+            (p) => p.name === settings.startTimeName,
+          )?.pos,
         },
         {
           name: settings.endTimeName,
           type: 5,
           typeArgs: { subType: "datetime" },
+          pos: taskBlock?.properties?.find(
+            (p) => p.name === settings.endTimeName,
+          )?.pos,
         },
       ],
     )

@@ -23,7 +23,7 @@
     "noFallthroughCasesInSwitch": true
   },
   "include": [
-    "src"
+    "orca-simple-task-canvas-confetti/src"
   ],
   "references": [
     {
